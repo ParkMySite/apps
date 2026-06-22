@@ -3,7 +3,7 @@
 
 const Master_ID = '10g0Ctj_mEtozUcCPceI5LKXaZG1XXP0TpT0mGoNR3fM'; //master sheet id
 const API_KEY = 'AIzaSyDc8tegwi2rgHyDFYm7uWBqVqQ7Fwb3uWM';
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwDqXGv0dKJt16rwefYGe4VvxQW9D5gy3RGKaJ_Qzdo07Bcdw2lRHox0Ech8JYIJH2g/exec'; // for login time stamp update
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwe9PoJ_IL2UXkwK4hraYfV9gmT2kMKlTIi8XhYXx7fXkXHHmk459y7q3Tk2Vr9APK3-A/exec'; // for login time stamp update
 const MENU_Table = 'Menu';
 const ICON_Table = 'icons';
 const LOGIN_Table = 'Login';
