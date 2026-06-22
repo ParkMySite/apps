@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>App Title</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <!-- Cache Control Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Local CSS resources -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css?v=20250102">
+    <link rel="stylesheet" href="./css/bootstrap-icons.min.css?v=20250102">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main-style.css?v=20250102">
+    
+    <!-- PWA Manifest & Favicon -->
+    <link rel="manifest" href="/network/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="./images/favicon.svg">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    
+    <style>
+        .notification-icon-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .notification-icon {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background-color: #dc2626;
+            color: white;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            animation: pulse-red 1.5s infinite;
+        }
+        .notification-badge.zero { display: none; }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        .flash-news-container.hidden { display: none !important; }
+        .cache-info-badge {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            z-index: 9999;
+            font-family: monospace;
+            cursor: pointer;
+        }
+        .refresh-indicator { display: none; }
+    </style>
+    
+    <!-- DEVICE DETECTION & MOBILE REDIRECT (EARLY EXECUTION) -->
+    <script>
+        // ======================== DEVICE DETECTION & REDIRECT ========================
+        // Enhanced device detection matching the logic from html with redirect.html
+        // Check for mobile devices using screen width AND user agent pattern
+        (function() {
+            // Function to check if we are already on mobile target page (app.html) to avoid redirect loops
+            const currentPath = window.location.pathname;
+            const isAppPage = currentPath.includes('app.html');
+            
+            // Only run detection if NOT already on app.html (prevent infinite loop)
+            if (!isAppPage) {
+                // Device detection conditions (same as in html with redirect.html)
+                const isMobileWidth = window.innerWidth <= 768;
+                const isMobileUA = /Mobile|iPhone|iPad|Android|iPod|BlackBerry|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+                const isMobile = isMobileWidth || isMobileUA;
+                
+                // Optional: Check if we are in iframe (for embedded scenarios, skip redirect)
+                const isInIframe = window.self !== window.top;
+                
+                // Daily refresh check before redirect (keeps cache management consistent)
+                function checkDailyRedirectRefresh() {
+                    const lastLoginDate = localStorage.getItem('lastLoginDate');
+                    const today = new Date().toDateString();
+                    if (lastLoginDate !== today) {
+                        console.log("First login of the day - clearing session cache before redirect");
+                        sessionStorage.clear();
+                        localStorage.setItem('lastLoginDate', today);
+                        return true;
+                    }
+                    return false;
+                }
+                
+                // Perform redirect if mobile device detected AND not in iframe
+                if (isMobile && !isInIframe) {
+                    // Clear cache if first login of day
+                    checkDailyRedirectRefresh();
+                    
+                    // Add cache-busting parameter to prevent stale mobile app
+                    const redirectUrl = "app.html?nocache=" + Date.now();
+                    console.log("[Mobile Redirect] Device detected: width=" + window.innerWidth + ", UA mobile=" + isMobileUA);
+                    console.log("[Mobile Redirect] Redirecting to: " + redirectUrl);
+                    
+                    // Execute redirect immediately
+                    window.location.href = redirectUrl;
+                    return; // Stop further script execution on desktop version
+                } else if (isMobile && isInIframe) {
+                    console.log("[Mobile Redirect] Inside iframe, skipping redirect to preserve parent context");
+                } else {
+                    console.log("[Mobile Redirect] Desktop mode active - loading standard dashboard");
+                }
+            } else {
+                console.log("[Mobile Redirect] Already on app.html, preventing redirect loop");
+            }
+        })();
+    </script>
+</head>
+<body class="light-theme">
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <img class="top_bar_pic" id="headder_thumb_pic" src="./images/favicon.svg" style="width: 100%; height: 100%;">
+                    </div>
+                    <h2>App Title</h2>
+                    <p>App description</p>
+                </div>
+                <div class="login-body">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter password">
+                    </div>
+                    <div class="text-center mb-2" style="font-size: 11px; color: var(--text-muted);">
+                        Version: <span id="appVersion">20250102_v5</span>
+                    </div>
+                    <div class="login-error" id="loginError" style="display: none;">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span id="errorMessageText">Invalid username or password</span>
+                    </div>
+                    <button class="btn btn-primary w-100" id="loginBtn">
+                        <span class="spinner-border spinner-border-sm d-none" id="loginSpinner" role="status"></span>
+                        <span id="loginText">Login</span>
+                    </button> 
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="password-manager.html" target="_blank"> Forgot Password</a> ● 
+                        <a href="./blog/index.html" target="_blank">Blog</a> ●
+                        <a href="#" onclick="location.reload(true); return false;" style="color: var(--text-muted);"> Refresh</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard-container" id="dashboardContainer" style="display: none;">
+        <div id="flashNewsContainer" class="flash-news-container hidden">
+            <div class="flash-news-ticker" id="flashNewsTicker"></div>
+        </div>
+
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center">
+                    <a class="navbar-brand" href="#">
+                        <div class="logo">
+                            <img class="top_bar_pic" src="./images/favicon.svg" style="width: 100%; height: 100%;">
+                        </div>
+                        <div class="brand-text">
+                            <h1>App Title</h1>
+                            <span>Description</span>
+                        </div>
+                    </a>
+                    <button class="sidebar-toggle-btn desktop-toggle" id="desktopSidebarToggle" title="Toggle sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <button class="sidebar-toggle-btn mobile-only-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenuOffcanvas" aria-label="Menu">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="notification-icon-wrapper" id="notificationIconWrapper">
+                        <button class="notification-icon" id="notificationIconBtn" title="Unread Chats">
+                           <i class="bi bi-chat-square-text"></i>
+                        </button>
+                        <span class="notification-badge zero" id="notificationBadge">0</span>
+                    </div>
+                    <div class="theme-switch-wrapper">
+                        <label class="theme-switch">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider">
+                                <i class="bi bi-sun"></i>
+                                <i class="bi bi-moon"></i>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="wrapper">
+            <div class="sidebar d-none d-lg-block" id="desktopSidebarContainer">
+                <div class="sidebar-menu-container" id="desktopSidebar">
+                    <div class="text-muted p-3"><div class="loading-spinner"></div> Loading...</div>
+                </div>
+            </div>
+            <div class="content-area">
+                <iframe id="content-frame" src="about:blank" title="Content"></iframe>
+                <div class="loading" id="loading"><div class="loading-spinner"></div> Loading...</div>
+                <div class="welcome-message" id="welcome-message">
+                    <h2><i class="bi bi-compass"></i>App Title</h2>
+                    <p>Select a menu item to get started</p>
+                    <p class="text-muted mt-3" style="font-size: 0.9rem;">***</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileMenuOffcanvas">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title"><i class="bi bi-compass me-2"></i>App Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body" id="mobileSidebar">
+                <div class="text-muted"><div class="loading-spinner"></div> Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Local JS resources -->
+    <script src="./js/bootstrap.bundle.min.js?v=20250102"></script>
+    <script src="./js/main-script.js?v=20250102"></script>
+    
+    <script>
+        // ======================== APP VERSION & DAILY CACHE CLEAR ========================
+        const APP_VERSION_ID = "20250102_v5_FIXED";
+        const LAST_CLEAR_DATE_KEY = "lastCacheClearDate";
+        
+        // Additional safety: If redirect didn't happen (e.g., script blocked), re-evaluate for mobile but only once
+        (function secondaryMobileCheck() {
+            // Only run if we are on desktop version (dashboard not shown yet and not app.html)
+            if (!window.location.pathname.includes('app.html')) {
+                const isMobileWidth = window.innerWidth <= 768;
+                const isMobileUA = /Mobile|iPhone|iPad|Android|iPod|BlackBerry|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+                const isMobile = isMobileWidth || isMobileUA;
+                const isInIframe = window.self !== window.top;
+                
+                if (isMobile && !isInIframe && !sessionStorage.getItem('mobileRedirectAttempted')) {
+                    sessionStorage.setItem('mobileRedirectAttempted', 'true');
+                    console.log("[Secondary Check] Mobile detected, redirecting to app.html");
+                    window.location.href = "app.html?nocache=" + Date.now();
+                }
+            }
+        })();
+        
+        // Function to reset login button state (enables it and hides spinner)
+        function resetLoginButtonState() {
+            const loginBtn = document.getElementById('loginBtn');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const loginText = document.getElementById('loginText');
+            
+            if (loginBtn) {
+                loginBtn.disabled = false;
+            }
+            if (loginSpinner) {
+                loginSpinner.classList.add('d-none');
+            }
+            if (loginText) {
+                loginText.textContent = 'Login';
+            }
+        }
+        
+        function performDailyCacheClear() {
+            const today = new Date().toDateString();
+            const lastClear = localStorage.getItem(LAST_CLEAR_DATE_KEY);
+            if (lastClear !== today) {
+                console.log("[System] Daily cache cleanup triggered");
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            if (name.includes('network') || name.includes('css') || name.includes('js')) {
+                                caches.delete(name);
+                            }
+                        });
+                    });
+                }
+                const keysToKeep = ['currentUser', 'branchCode', 'selectedBranch', 'theme', 'refreshInterval', 'soundEnabled', LAST_CLEAR_DATE_KEY, 'lastActivityTimestamp', 'lastLoginDate'];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (!keysToKeep.includes(key)) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                localStorage.setItem(LAST_CLEAR_DATE_KEY, today);
+            }
+        }
+        
+        // ======================== INACTIVITY LOGOUT ========================
+        let inactivityTimer = null;
+        const INACTIVITY_LIMIT_MS = 15 * 60 * 1000; // 15 minutes (security best practice)
+        
+        function resetInactivityTimer() {
+            if (!window.isAuthenticated) return;
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                if (window.isAuthenticated === true) {
+                    console.log("[Security] Inactivity timeout: auto-logout triggered");
+                    performSilentLogout();
+                }
+            }, INACTIVITY_LIMIT_MS);
+        }
+        
+        function performSilentLogout() {
+            // Reset login button state BEFORE calling logout
+            resetLoginButtonState();
+            
+            // Clear the inactivity timer
+            if (inactivityTimer) {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = null;
+            }
+            
+            // Call existing logout function
+            if (typeof window.logout === 'function') {
+                window.logout();
+            } else {
+                // Fallback logout logic
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
+                window.isAuthenticated = false;
+                window.currentUser = null;
+                const loginOverlay = document.getElementById('loginOverlay');
+                const dashboardContainer = document.getElementById('dashboardContainer');
+                const flashContainer = document.getElementById('flashNewsContainer');
+                if (flashContainer) flashContainer.classList.add('hidden');
+                if (loginOverlay) loginOverlay.style.display = 'flex';
+                if (dashboardContainer) dashboardContainer.style.display = 'none';
+                const usernameField = document.getElementById('username');
+                const passwordField = document.getElementById('password');
+                if (usernameField) usernameField.value = '';
+                if (passwordField) passwordField.value = '';
+                const badge = document.getElementById('notificationBadge');
+                if (badge) { badge.textContent = '0'; badge.classList.add('zero'); }
+                document.title = 'App Title';
+            }
+            
+            // Additional reset to ensure login button is enabled
+            setTimeout(() => {
+                resetLoginButtonState();
+                // Clear any stale error messages
+                const loginError = document.getElementById('loginError');
+                if (loginError) loginError.style.display = 'none';
+            }, 100);
+        }
+        
+        function bindActivityListeners() {
+            const events = ['mousedown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'click'];
+            const activityHandler = () => {
+                if (window.isAuthenticated === true) {
+                    resetInactivityTimer();
+                    localStorage.setItem('lastActivityTimestamp', Date.now().toString());
+                }
+            };
+            events.forEach(event => {
+                window.addEventListener(event, activityHandler, { passive: true });
+            });
+            const iframe = document.getElementById('content-frame');
+            if (iframe) {
+                iframe.addEventListener('load', () => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc) {
+                            const iframeEvents = ['mousedown', 'keydown', 'touchstart', 'click'];
+                            iframeEvents.forEach(ev => {
+                                iframeDoc.addEventListener(ev, activityHandler);
+                            });
+                        }
+                    } catch(e) { /* cross-origin */ }
+                });
+            }
+        }
+        
+        // Wrap the original handleLogin to ensure button state is managed
+        const originalHandleLogin = window.handleLogin;
+        if (typeof originalHandleLogin === 'function') {
+            window.handleLogin = async function() {
+                try {
+                    await originalHandleLogin.apply(this, arguments);
+                } catch(error) {
+                    // If login fails, reset button state
+                    resetLoginButtonState();
+                    throw error;
+                }
+                
+                setTimeout(() => {
+                    if (window.isAuthenticated === true) {
+                        resetInactivityTimer();
+                    } else {
+                        // If login failed for any reason, reset button
+                        resetLoginButtonState();
+                    }
+                }, 500);
+            };
+        }
+        
+        // Wrap logout to properly reset button state
+        if (typeof window.logout === 'function') {
+            const originalLogout = window.logout;
+            window.logout = function() {
+                if (inactivityTimer) clearTimeout(inactivityTimer);
+                originalLogout.apply(this, arguments);
+                // Reset login button after logout
+                resetLoginButtonState();
+            };
+        } else {
+            window.logout = function() {
+                if (inactivityTimer) clearTimeout(inactivityTimer);
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
+                window.isAuthenticated = false;
+                window.currentUser = null;
+                const loginOverlay = document.getElementById('loginOverlay');
+                const dashboardContainer = document.getElementById('dashboardContainer');
+                if (loginOverlay) loginOverlay.style.display = 'flex';
+                if (dashboardContainer) dashboardContainer.style.display = 'none';
+                const usernameField = document.getElementById('username');
+                const passwordField = document.getElementById('password');
+                if (usernameField) usernameField.value = '';
+                if (passwordField) passwordField.value = '';
+                const badge = document.getElementById('notificationBadge');
+                if (badge) { badge.textContent = '0'; badge.classList.add('zero'); }
+                document.title = 'App Title';
+                resetLoginButtonState();
+            };
+        }
+        
+        function watchAuthState() {
+            let lastAuthState = window.isAuthenticated;
+            setInterval(() => {
+                if (window.isAuthenticated !== lastAuthState) {
+                    lastAuthState = window.isAuthenticated;
+                    if (window.isAuthenticated === true) {
+                        resetInactivityTimer();
+                    } else if (window.isAuthenticated === false) {
+                        if (inactivityTimer) clearTimeout(inactivityTimer);
+                        // Reset button state when auth becomes false
+                        resetLoginButtonState();
+                    }
+                }
+            }, 500);
+        }
+        
+        // ======================== NOTIFICATION CONFIGURATION (lightweight) ========================
+        // Maintain compatibility with original notification system if needed
+        window.fetchUnreadChatCount = window.fetchUnreadChatCount || function() { return Promise.resolve(0); };
+        window.openChatInIframe = window.openChatInIframe || function() {
+            const chatUrl = "./chat.html?t=" + Date.now();
+            const iframe = document.getElementById('content-frame');
+            const loading = document.getElementById('loading');
+            const welcomeMessage = document.getElementById('welcome-message');
+            if (welcomeMessage) welcomeMessage.style.display = 'none';
+            if (loading) loading.style.display = 'flex';
+            if (iframe) {
+                iframe.onload = function() { if (loading) loading.style.display = 'none'; };
+                iframe.src = chatUrl;
+            }
+        };
+        
+        // Initialize everything after DOM is ready (only runs if not redirected)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we are still on desktop version (redirect might have been skipped but mobile flag set)
+            if (window.location.pathname.includes('app.html')) {
+                return; // Do nothing if somehow app.html loaded (edge case)
+            }
+            
+            performDailyCacheClear();
+            
+            const versionSpan = document.getElementById('appVersion');
+            if (versionSpan) versionSpan.textContent = APP_VERSION_ID;
+            
+            // Cache clear button (utility)
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'cache-info-badge';
+            infoDiv.innerHTML = `<i class="bi bi-arrow-repeat"></i> Clear Cache`;
+            infoDiv.onclick = function() {
+                if (confirm('Clear all cache and reload?')) {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    if ('caches' in window) {
+                        caches.keys().then(names => names.forEach(name => caches.delete(name)));
+                    }
+                    window.location.reload(true);
+                }
+            };
+            document.body.appendChild(infoDiv);
+            
+            bindActivityListeners();
+            watchAuthState();
+            
+            setTimeout(() => {
+                if (window.isAuthenticated === true) {
+                    resetInactivityTimer();
+                } else {
+                    // Ensure login button is enabled if not authenticated
+                    resetLoginButtonState();
+                }
+            }, 800);
+            
+            // If notification icon exists, wire up basic function
+            const notifBtn = document.getElementById('notificationIconBtn');
+            if (notifBtn && !notifBtn.hasListener) {
+                notifBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (window.openChatInIframe) window.openChatInIframe();
+                });
+                notifBtn.hasListener = true;
+            }
+        });
+        
+        // Monitor login button clicks to ensure it gets reset if something goes wrong
+        const loginBtnElement = document.getElementById('loginBtn');
+        if (loginBtnElement) {
+            loginBtnElement.addEventListener('click', function() {
+                // Small delay to check if login gets stuck
+                setTimeout(() => {
+                    const isDisabled = loginBtnElement.disabled;
+                    const isAuthenticated = window.isAuthenticated;
+                    if (isDisabled === true && isAuthenticated !== true) {
+                        // Login button is stuck disabled but not authenticated - reset it
+                        console.log("[Fix] Detected stuck login button, resetting...");
+                        resetLoginButtonState();
+                    }
+                }, 3000);
+            });
+        }
+        
+        // Also monitor for any error that might leave button disabled
+        window.addEventListener('error', function() {
+            if (!window.isAuthenticated) {
+                resetLoginButtonState();
+            }
+        });
+        
+        // Expose helper functions globally
+        window.APP_VERSION = APP_VERSION_ID;
+        window.resetLoginButtonState = resetLoginButtonState;
+        window.performSilentLogout = performSilentLogout;
+        
+        console.log("[Security] 15-min inactivity logout active | Daily cache reset enabled | Mobile redirect active | Login button reset on logout");
+    </script>
+</body>
+</html>
