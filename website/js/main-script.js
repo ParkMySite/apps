@@ -461,11 +461,11 @@ function updateNotificationBadge(count) {
         }, 500);
         
         // Update document title with notification count
-        document.title = `(${count}) NOC Admin`;
+        document.title = `(${count})   Admin`;
     } else {
         badge.textContent = '0';
         badge.classList.add('zero');
-        document.title = 'NOC Admin';
+        document.title = '  Admin';
     }
 }
 
@@ -761,7 +761,7 @@ function logout() {
     lastUnreadCount = 0;
     
     // Reset document title
-    document.title = 'NOC Admin';
+    document.title = '  Admin';
     
     // Reset user interaction flag
     userInteracted = false;
