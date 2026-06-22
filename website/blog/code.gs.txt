@@ -2,7 +2,7 @@
 // Complete Google Apps Script for Blog Management System
 //
 
-const SPREADSHEET_ID = '1UuyJa9qNaynwTPJh_Cg8FL7BPuj8wFF6-1nq0Ix-bK8';
+const SPREADSHEET_ID = '1UXeJjBMeXSD0OfaLckJ3O4fXW5omKM8KLAUYsWXelkw';
 const BLOG_SHEET = 'blog data';
 const COMMENTS_SHEET = 'Comments data';
 const PROFILES_SHEET = 'Profiles';  // Note: Capital P as in your sheet
