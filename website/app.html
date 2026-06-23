@@ -477,11 +477,11 @@
         if (count > 0) {
             badge.textContent = count > 99 ? '99+' : count;
             badge.classList.remove('zero');
-            document.title = `(${count}) NOC Mobile`;
+            document.title = `(${count})  AppMobile`;
         } else {
             badge.textContent = '0';
             badge.classList.add('zero');
-            document.title = 'NOC Mobile';
+            document.title = ' AppMobile';
         }
     }
     
@@ -811,7 +811,7 @@
         document.body.style.overflow = '';
         updateMobileNotificationBadge(0);
         lastUnreadCount = 0;
-        document.title = 'NOC Mobile';
+        document.title = ' AppMobile';
         userInteracted = false;
     }
     
