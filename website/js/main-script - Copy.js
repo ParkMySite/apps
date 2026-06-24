@@ -1,11 +1,13 @@
-// Google Sheets configuration
-const SPREADSHEET_ID = '1jd1xZe9x2mrZm5KAwGT12vMNYjbrnynsmelNKeK95jc';
-const API_KEY = 'AIzaSyBB1V3vJpNZ9X1GIF-YOwoa6YSt_iXMLo0';
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxYAM6iuUmr0Sr72N6s7XClG05gOV8mwINpc5f-Ju5ZrmbBD_CZfjfaQeOy3ZoVUX1_/exec';
-const MENU_SHEET = 'Menu';
-const ICON_SHEET = 'icons';
-const LOGIN_SHEET = 'Login';
-const FLASH_SHEET = 'scroll texts';
+//  configuration 
+// _Table="Sheet Name"
+
+const Master_ID = '10g0Ctj_mEtozUcCPceI5LKXaZG1XXP0TpT0mGoNR3fM'; //master sheet id
+const API_KEY = 'AIzaSyDc8tegwi2rgHyDFYm7uWBqVqQ7Fwb3uWM';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwe9PoJ_IL2UXkwK4hraYfV9gmT2kMKlTIi8XhYXx7fXkXHHmk459y7q3Tk2Vr9APK3-A/exec'; // for login time stamp update
+const MENU_Table = 'Menu';
+const ICON_Table = 'icons';
+const LOGIN_Table = 'Login';
+const FLASH_Table = 'scroll texts';
 const MENU_RANGE = 'A:D';
 const ICON_RANGE = 'A:F';
 const LOGIN_RANGE = 'B:D';
@@ -15,9 +17,9 @@ const FLASH_RANGE = 'A:A';
 const CACHE_BUST = Date.now();
 
 // Chat configuration for notification system
-const CHAT_SPREADSHEET_ID = "1fkiFo1i60NxA_ujl1GhPmNnSLKI6seb3YiMVhPxZjgM";
-const CHAT_SHEET_NAME = "Chats";
-const CHAT_API_KEY = "AIzaSyBAuS3Brpsw5JOJnjNJii1UlFa7ClXf8d4";
+const CHAT_Master_ID = "1dkeQ7zsPi1dH1KHaf4BO9uKEWKgwSnbr59KHjc8n9QM";
+const CHAT_Table_NAME = "Chats";
+const CHAT_API_KEY = "AIzaSyDc8tegwi2rgHyDFYm7uWBqVqQ7Fwb3uWM";
 
 let menuData = [];
 let iconData = new Map();
@@ -395,8 +397,8 @@ async function fetchUnreadChatCount() {
     }
     
     try {
-        const range = `${CHAT_SHEET_NAME}!A:K`;
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${CHAT_SPREADSHEET_ID}/values/${range}?key=${CHAT_API_KEY}&_=${Date.now()}`;
+        const range = `${CHAT_Table_NAME}!A:K`;
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${CHAT_Master_ID}/values/${range}?key=${CHAT_API_KEY}&_=${Date.now()}`;
         const response = await fetch(url);
         const data = await response.json();
         
@@ -459,11 +461,11 @@ function updateNotificationBadge(count) {
         }, 500);
         
         // Update document title with notification count
-        document.title = `(${count}) NOC Admin`;
+        document.title = `(${count})   Admin`;
     } else {
         badge.textContent = '0';
         badge.classList.add('zero');
-        document.title = 'NOC Admin';
+        document.title = '  Admin';
     }
 }
 
@@ -531,7 +533,7 @@ async function fetchAndDisplayFlashNews() {
     if (!flashContainer || !flashTicker) return;
     
     try {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${FLASH_SHEET}!A2:A?key=${API_KEY}&_=${Date.now()}`;
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${Master_ID}/values/${FLASH_Table}!A2:A?key=${API_KEY}&_=${Date.now()}`;
         const response = await fetch(url);
         const data = await response.json();
         
@@ -610,7 +612,7 @@ function adjustWrapperHeightForTicker() {
 // ======================== LOGIN FUNCTIONS ========================
 async function validateLogin(username, password) {
     try {
-        const loginUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${LOGIN_SHEET}!${LOGIN_RANGE}?key=${API_KEY}&_=${Date.now()}`;
+        const loginUrl = `https://sheets.googleapis.com/v4/spreadsheets/${Master_ID}/values/${LOGIN_Table}!${LOGIN_RANGE}?key=${API_KEY}&_=${Date.now()}`;
         const response = await fetch(loginUrl);
         const data = await response.json();
         
@@ -759,7 +761,7 @@ function logout() {
     lastUnreadCount = 0;
     
     // Reset document title
-    document.title = 'NOC Admin';
+    document.title = '  Admin';
     
     // Reset user interaction flag
     userInteracted = false;
@@ -956,7 +958,7 @@ async function fetchSheetData(menuSheetName) {
         
         iconData.clear();
         
-        const menuUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${menuSheetName}!${MENU_RANGE}?key=${API_KEY}&_=${Date.now()}`;
+        const menuUrl = `https://sheets.googleapis.com/v4/spreadsheets/${Master_ID}/values/${menuSheetName}!${MENU_RANGE}?key=${API_KEY}&_=${Date.now()}`;
         const menuResponse = await fetch(menuUrl);
         const menuData_raw = await menuResponse.json();
         
@@ -965,7 +967,7 @@ async function fetchSheetData(menuSheetName) {
             throw new Error(`Menu sheet '${menuSheetName}' not found or inaccessible`);
         }
         
-        const iconUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${ICON_SHEET}!${ICON_RANGE}?key=${API_KEY}&_=${Date.now()}`;
+        const iconUrl = `https://sheets.googleapis.com/v4/spreadsheets/${Master_ID}/values/${ICON_Table}!${ICON_RANGE}?key=${API_KEY}&_=${Date.now()}`;
         const iconResponse = await fetch(iconUrl);
         const iconData_raw = await iconResponse.json();
         if (!iconData_raw.error) processIconData(iconData_raw.values);
@@ -992,13 +994,7 @@ async function loadMenuData(menuSheetName) {
         displayLoggedInUser();
         
         const welcomeMsg = document.getElementById('welcome-message');
-        if (welcomeMsg) {
-            welcomeMsg.style.display = 'block';
-            // Auto-hide welcome message after 5 seconds
-            setTimeout(() => {
-                welcomeMsg.style.display = 'none';
-            }, 5000);
-        }
+        if (welcomeMsg) welcomeMsg.style.display = 'block';
         
         const loading = document.getElementById('loading');
         if (loading) loading.style.display = 'none';
