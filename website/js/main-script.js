@@ -994,7 +994,13 @@ async function loadMenuData(menuSheetName) {
         displayLoggedInUser();
         
         const welcomeMsg = document.getElementById('welcome-message');
-        if (welcomeMsg) welcomeMsg.style.display = 'block';
+        if (welcomeMsg) {
+            welcomeMsg.style.display = 'block';
+            // Auto-hide welcome message after 5 seconds
+            setTimeout(() => {
+                welcomeMsg.style.display = 'none';
+            }, 5000);
+        }
         
         const loading = document.getElementById('loading');
         if (loading) loading.style.display = 'none';
@@ -1007,7 +1013,6 @@ async function loadMenuData(menuSheetName) {
         showError('Error loading menu data');
     }
 }
-
 function showError(message) {
     const desktop = document.getElementById('desktopSidebar');
     const mobile = document.getElementById('mobileSidebar');
