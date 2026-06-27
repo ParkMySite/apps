@@ -866,7 +866,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted!',
-                        text: `Branch "${record.branchId} - ${record.homeId}" has been removed.`,
+                        text: `Master "${record.branchId} - ${record.homeId}" has been removed.`,
                         timer: 1500,
                         showConfirmButton: false
                     });
@@ -917,7 +917,7 @@
         const $btn = $("#confirmUpdateBtn");
         const originalHtml = $btn.html();
         $btn.html('<i class="bi bi-arrow-repeat"></i> Updating...').prop('disabled', true);
-        showGlobalLoading("Updating branch...");
+        showGlobalLoading("Updating...");
         
         try {
             const payload = {
@@ -1023,7 +1023,7 @@
             Swal.fire({ 
                 icon: 'success', 
                 title: 'Added!', 
-                text: `Branch "${branchId} - ${homeId}" has been added successfully.`,
+                text: `Master "${branchId} - ${homeId}" has been added successfully.`,
                 timer: 2000,
                 showConfirmButton: false
             });
