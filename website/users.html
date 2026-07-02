@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>NOC · Treasury & Branch Login Directory</title>
+    <title>User  Login Directory</title>
     <!-- LOCAL CSS & JS (using ./css and ./js paths) -->
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/bootstrap-icons.min.css">
@@ -24,7 +24,7 @@
         body {
             background: #f0f5fa;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            padding: 28px 24px;
+            padding: 20px 16px;
             color: var(--dark);
         }
         
@@ -33,37 +33,41 @@
             margin: 0 auto;
         }
         
-        .page-header {
-            background: white;
-            border-radius: 24px;
-            padding: 20px 28px;
-            margin-bottom: 28px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        
-        .title-section h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin: 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .title-section h1 i {
-            background: none;
-            color: var(--primary);
-        }
+.page-header {
+    padding: 15px 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+ 
+}
+.page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header-left i {
+    font-size: 1.8rem !important;
+    background: rgb(56 143 251 / 15%) !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+    color: #184f83 !important;
+}
+
+
+.page-header-left h1 {
+    margin: 0 !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: #184f83!important;
+}
+ .page-header-left p {
+            margin: 2px 0 0;
+            opacity: 0.7;
+            font-size: 0.75rem;
+ }
         
         .stats-badge {
             display: flex;
@@ -86,7 +90,7 @@
         
         .table-card {
             background: white;
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 20px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.05);
             border: 1px solid var(--border);
@@ -207,22 +211,27 @@
     </style>
 </head>
 <body>
-<div class="dashboard-container">
-    <div class="page-header">
-        <div class="title-section">
-            <h1><i class="bi bi-people-fill"></i> Treasury & Branch Directory</h1>
-        </div>
-        <div class="stats-badge">
+<div class="page-header">
+                <div class="page-header-left">
+                  <i class="bi bi-people-fill"></i>
+                    <div>
+                        <h1>User  Login Directory</h1>
+                        <p>Users Login Details with Time Stamp</p>
+                    </div>
+                </div>
+<div class="stats-badge">
             <span><i class="bi bi-person-badge"></i> <span id="totalUsers">—</span> Users</span>
             <span><i class="bi bi-building"></i> <span id="totalBranches">—</span> Branches</span>
             <span><i class="bi bi-calendar-check"></i> <span id="activeToday">—</span> Logged in today</span>
         </div>
-    </div>
+            </div>
+<div class="dashboard-container">
+ 
     
     <div class="table-card">
         <div id="tableLoader" style="text-align:center; padding:60px;">
             <div class="spinner-sm"></div>
-            <p class="mt-3 text-muted">Loading treasury & branch records from sheet...</p>
+            <p class="mt-3 text-muted">Loading ...</p>
         </div>
         <div id="tableWrapper" style="display:none;">
             <table id="loginTable" class="table table-hover" style="width:100%">
@@ -230,7 +239,7 @@
                     <tr>
                         <th>Type</th>
                         <th>ID / Branch Code</th>
-                        <th>Treasury/Branch Name</th>
+                        <th> Name</th>
                         <th>Email ID</th>
                         <th>Last Login</th>
                         <th>Logged Today</th>
@@ -258,9 +267,9 @@
     // Columns: A=Type/UserFlag, B=ID/Code, C=Name (ignored, removed from display), 
     // D=MenuAccess(ignored), E=Email, F=(unused), G=Timestamp, H=Treasury/Branch Name
     // ============================================================
-    const SPREADSHEET_ID = '1jd1xZe9x2mrZm5KAwGT12vMNYjbrnynsmelNKeK95jc';
+    const SHEET_ID = '10g0Ctj_mEtozUcCPceI5LKXaZG1XXP0TpT0mGoNR3fM';
     const SHEET_NAME = 'Login';
-    const API_KEY = 'AIzaSyBB1V3vJpNZ9X1GIF-YOwoa6YSt_iXMLo0';
+    const API_KEY = 'AIzaSyDc8tegwi2rgHyDFYm7uWBqVqQ7Fwb3uWM';
     
     let allRecords = [];
     let dataTable = null;
@@ -496,7 +505,7 @@
         try {
             // Updated range to include column H (A:H)
             const range = encodeURIComponent(`${SHEET_NAME}!A:H`);
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${API_KEY}`;
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
             
             const response = await fetch(url);
             if (!response.ok) {
