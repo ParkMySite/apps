@@ -563,7 +563,7 @@
         </div>
     </div>
 </div>
-<script src="add-members.js"></script>
+
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
 <script src="../js/select2.min.js"></script>
@@ -572,7 +572,13 @@
 
 <script>
     // ================= CONFIGURATION =================
-
+   const CONFIG = {
+      SPREADSHEET_ID: '1Q7fGIi2ky6b7cYt49ljwIwGEJv3kQ8pmz47bFaPBEDs',
+       API_KEY: 'AIzaSyDc8tegwi2rgHyDFYm7uWBqVqQ7Fwb3uWM',
+        SCHEMA_SPREADSHEET_ID: '1Q7fGIi2ky6b7cYt49ljwIwGEJv3kQ8pmz47bFaPBEDs',
+        SCHEMA_TABLE_NAME: 'Tables',
+       SCHEMA_API_KEY: 'AIzaSyDc8tegwi2rgHyDFYm7uWBqVqQ7Fwb3uWM'
+   };
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzQvUMoC7obA6Mrb5-iAsjx_Ly1ZZTUzRuUkJ7L2mIYjPPH04Y51p1woVkCEpH2PSQFw/exec";
     
     let members = [];
