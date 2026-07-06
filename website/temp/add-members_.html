@@ -16,13 +16,28 @@
     <style>
         * { box-sizing: border-box; }
         body {
-           background: #ffffff00;
+           background:  #fff0;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             padding: 20px 16px;
             margin: 0;
         }
+  .modal-backdrop {background-color: #fff0;}
+   #global-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+              background: #fff0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            /*backdrop-filter: blur(3px);*/
+        }
+
         .app-card {
-            max-width: 98%;
+            max-width: 100%;
             margin: 0 auto;
             background: white;
             border-radius: 28px;
@@ -30,18 +45,41 @@
             overflow: hidden;
         }
         .page-header {
-            background: linear-gradient(135deg, #0f5b9c 0%, #1a4b7a 100%);
-            color: white;
-            padding: 15px 25px;
-        }
-        .page-header h4 {
-            margin: 0;
-            font-weight: 600;
-        }
-        .page-header i {
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
+    padding: 15px 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+ 
+}
+.page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header-left i {
+    font-size: 1.8rem !important;
+    background: rgb(56 143 251 / 15%) !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+    color: #184f83 !important;
+}
+
+
+.page-header-left h1 {
+    margin: 0 !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: #184f83!important;
+}
+ .page-header-left p {
+            margin: 2px 0 0;
+            opacity: 0.7;
+            font-size: 0.75rem;
+ }
+
         .content-pane {
             padding: 30px 32px;
         }
@@ -121,20 +159,7 @@
             background: #fef2f2;
             border-left-color: #dc2626;
         }
-        #global-loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            backdrop-filter: blur(3px);
-        }
-        .modal-content { border-radius: 24px; }
+                .modal-content { border-radius: 24px; }
         .photo-preview {
             width: 120px;
             height: 120px;
@@ -268,15 +293,17 @@
     </style>
 </head>
 <body>
+<div class="page-header">
+                <div class="page-header-left">
+                                   <i class="bi bi-people-fill"></i>
+                    <div>
+                        <h1>Member Management - Add</h1>
+                         <p>Add new members to active branches</p>
+                    </div>
+                </div>
+ </div>
 <div class="app-card">
-    <div class="page-header d-flex align-items-center">
-        <i class="bi bi-people-fill"></i>
-        <div>
-            <h4>Member Management - Add</h4>
-            <small class="opacity-75">Add new members to active branches</small>
-        </div>
-    </div>
-    
+      
     <div class="content-pane">
         <h4 class="mb-3"><i class="bi bi-building"></i> Branch Selection</h4>
         
