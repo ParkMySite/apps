@@ -173,18 +173,77 @@
             gap: 20px;
             flex-wrap: wrap;
         }
+        
+        /* ===== RESPONSIVE TABLE WITH SCROLLING ===== */
         .members-table-container {
             margin-top: 20px;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             overflow: hidden;
         }
-        .members-table-container table {
+        .members-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 2px;
+        }
+        .members-table-wrapper table {
             margin-bottom: 0;
+            min-width: 1300px;
+            width: 100%;
         }
         .members-table-container thead {
             background: #f8fafc;
         }
+        .members-table-container thead th {
+            white-space: nowrap;
+            font-size: 0.8rem;
+            padding: 8px 10px;
+            position: sticky;
+            top: 0;
+            background: #f8fafc;
+            z-index: 10;
+        }
+        .members-table-container tbody td {
+            padding: 8px 10px;
+            font-size: 0.85rem;
+            vertical-align: middle;
+        }
+        .members-table-container tbody td:first-child {
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .members-table-wrapper table {
+                min-width: 1000px;
+            }
+            .members-table-wrapper {
+                margin: 0 -1px;
+            }
+            .members-table-container thead th {
+                font-size: 0.7rem;
+                padding: 6px 8px;
+            }
+            .members-table-container tbody td {
+                font-size: 0.75rem;
+                padding: 6px 8px;
+            }
+        }
+        @media (max-width: 480px) {
+            .members-table-wrapper table {
+                min-width: 900px;
+            }
+            .members-table-container thead th {
+                font-size: 0.65rem;
+                padding: 4px 6px;
+            }
+            .members-table-container tbody td {
+                font-size: 0.7rem;
+                padding: 4px 6px;
+            }
+        }
+        
         .action-icons i {
             font-size: 1.2rem;
             margin: 0 5px;
@@ -228,6 +287,12 @@
         }
         @media (max-width: 700px) {
             .content-pane { padding: 20px; }
+            .page-header-left h1 { font-size: 1.3rem !important; }
+            .page-header-left i { font-size: 1.4rem !important; padding: 8px !important; }
+            .action-buttons { flex-direction: column; }
+            .action-buttons .btn { width: 100%; justify-content: center; }
+            .photo-preview { width: 80px; height: 80px; }
+            .member-id-display { font-size: 0.9rem; padding: 6px 12px; }
         }
         .flatpickr-input {
             background: white;
@@ -293,22 +358,39 @@
         .select2-dropdown-master + .select2-container .select2-selection--single .select2-selection__clear {
             display: none !important;
         }
+
+        /* Scroll indicator for mobile */
+        .scroll-hint {
+            display: none;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.75rem;
+            color: #64748b;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .scroll-hint i {
+            margin-right: 6px;
+        }
+        @media (max-width: 768px) {
+            .scroll-hint {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="page-header">
-                <div class="page-header-left">
-             <i class="bi bi-people-fill"></i>
-                    <div>
-                        <h1>Member Management - Add</h1>
-                        <p>Add new members to active branches</p>
-                    </div>
-                </div>
-            </div>
+    <div class="page-header-left">
+        <i class="bi bi-people-fill"></i>
+        <div>
+            <h1>Member Management - Add</h1>
+            <p>Add new members to active branches</p>
+        </div>
+    </div>
+</div>
 
 <div class="app-card">
-    
-    
     <div class="content-pane">
         <h4 class="mb-3"><i class="bi bi-building"></i> Branch Selection</h4>
         
@@ -364,35 +446,42 @@
             </button>
         </div>
 
+        <!-- ===== RESPONSIVE TABLE WITH SCROLLING ===== -->
         <div class="members-table-container">
-            <table class="table table-striped table-hover" id="membersTable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Member ID</th>
-                        <th>Relation</th>
-                        <th>Name</th>
-                        <th>DoB</th>
-                        <th>Gender</th>
-                        <th>Contact</th>
-                        <th>Education</th>
-                        <th>Job</th>
-                        <th>Marital Status</th>
-                        <th>Photo</th>
-                        <th>Email ID</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="membersTableBody">
-                    <tr class="placeholder-row">
-                        <td colspan="13" class="text-center py-4 text-muted">
-                            <i class="bi bi-inbox fs-2"></i>
-                            <h6>No members added yet</h6>
-                            <p>Click "Add Member" to start</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- Scroll hint for mobile users -->
+            <div class="scroll-hint">
+                <i class="bi bi-arrow-left-right"></i> Scroll horizontally to view all columns
+            </div>
+            <div class="members-table-wrapper">
+                <table class="table table-striped table-hover" id="membersTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Member ID</th>
+                            <th>Relation</th>
+                            <th>Name</th>
+                            <th>DoB</th>
+                            <th>Gender</th>
+                            <th>Contact</th>
+                            <th>Education</th>
+                            <th>Job</th>
+                            <th>Marital Status</th>
+                            <th>Photo</th>
+                            <th>Email ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <tr class="placeholder-row">
+                            <td colspan="13" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-2"></i>
+                                <h6>No members added yet</h6>
+                                <p>Click "Add Member" to start</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="mt-4">
@@ -563,6 +652,7 @@
         </div>
     </div>
 </div>
+
 <script src="add-members.js"></script>
 <script src="../js/jquery.min.js"></script>
 <script src="../js/bootstrap.bundle.min.js"></script>
@@ -572,6 +662,7 @@
 
 <script>
     // ================= CONFIGURATION =================
+    // CONFIG is now loaded from config.js
 
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzQvUMoC7obA6Mrb5-iAsjx_Ly1ZZTUzRuUkJ7L2mIYjPPH04Y51p1woVkCEpH2PSQFw/exec";
     
@@ -1080,72 +1171,73 @@
     }
 
     // ================= RENDER MEMBERS TABLE =================
-function renderMembersTable() {
-    const $tbody = $('#membersTableBody');
-    
-    if(members.length === 0) {
-        $tbody.html(`<tr><td colspan="13" class="text-center py-4 text-muted">
-            <i class="bi bi-inbox fs-2"></i>
-            <h6>No members added yet</h6>
-            <p>Click "Add Member" to start</p>
-        </td></tr>`);
-        return;
+    function renderMembersTable() {
+        const $tbody = $('#membersTableBody');
+        
+        if(members.length === 0) {
+            $tbody.html(`<tr><td colspan="13" class="text-center py-4 text-muted">
+                <i class="bi bi-inbox fs-2"></i>
+                <h6>No members added yet</h6>
+                <p>Click "Add Member" to start</p>
+            </td></tr>`);
+            return;
+        }
+        
+        let html = '';
+        members.forEach((member, index) => {
+            const photoHtml = member.photo ? 
+                `<img src="${member.photo}" class="table-photo-thumb" alt="Photo">` : 
+                '<span class="text-muted">—</span>';
+            
+            html += `<tr>
+                <td>${index + 1}</td>
+                <td>${escapeHtml(member.memberId)}</td>
+                <td>${escapeHtml(member.relation)}</td>
+                <td>${escapeHtml(member.name)}</td>
+                <td>${escapeHtml(member.dob)}</td>
+                <td>${escapeHtml(member.gender)}</td>
+                <td>${escapeHtml(member.contact)}</td>
+                <td>${escapeHtml(member.education)}</td>
+                <td>${escapeHtml(member.job || '')}</td>
+                <td>${escapeHtml(member.maritalStatus)}</td>
+                <td>${photoHtml}</td>
+                <td>${escapeHtml(member.remarks || '')}</td>
+                <td>
+                    <div class="action-icons">
+                        <i class="bi bi-pencil-square edit-member" data-index="${index}" style="cursor:pointer;" title="Edit"></i>
+                        <i class="bi bi-trash3 delete-member" data-index="${index}" style="cursor:pointer;" title="Delete"></i>
+                    </div>
+                </td>
+            </tr>`;
+        });
+        
+        $tbody.html(html);
+        
+        $('.edit-member').off('click').on('click', function() {
+            const index = parseInt($(this).data('index'));
+            openEditModal(index);
+        });
+        
+        $('.delete-member').off('click').on('click', function() {
+            const index = parseInt($(this).data('index'));
+            const name = members[index].name;
+            Swal.fire({
+                title: 'Remove Member?',
+                text: `Remove "${name}" from the list?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                confirmButtonText: 'Yes, remove!'
+            }).then(res => {
+                if(res.isConfirmed) {
+                    members.splice(index, 1);
+                    renderMembersTable();
+                    updateMemberIdDisplay();
+                }
+            });
+        });
     }
     
-    let html = '';
-    members.forEach((member, index) => {
-        const photoHtml = member.photo ? 
-            `<img src="${member.photo}" class="table-photo-thumb" alt="Photo">` : 
-            '<span class="text-muted">—</span>';
-        
-        html += `<tr>
-            <td>${index + 1}</td>
-            <td>${escapeHtml(member.memberId)}</td>
-            <td>${escapeHtml(member.relation)}</td>
-            <td>${escapeHtml(member.name)}</td>
-            <td>${escapeHtml(member.dob)}</td>
-            <td>${escapeHtml(member.gender)}</td>
-            <td>${escapeHtml(member.contact)}</td>
-            <td>${escapeHtml(member.education)}</td>
-            <td>${escapeHtml(member.job || '')}</td>
-            <td>${escapeHtml(member.maritalStatus)}</td>
-            <td>${photoHtml}</td>
-            <td>${escapeHtml(member.remarks || '')}</td>
-            <td>
-                <div class="action-icons">
-                    <i class="bi bi-pencil-square edit-member" data-index="${index}" style="cursor:pointer;" title="Edit"></i>
-                    <i class="bi bi-trash3 delete-member" data-index="${index}" style="cursor:pointer;" title="Delete"></i>
-                </div>
-            </td>
-        </tr>`;
-    });
-    
-    $tbody.html(html);
-    
-    $('.edit-member').off('click').on('click', function() {
-        const index = parseInt($(this).data('index'));
-        openEditModal(index);
-    });
-    
-    $('.delete-member').off('click').on('click', function() {
-        const index = parseInt($(this).data('index'));
-        const name = members[index].name;
-        Swal.fire({
-            title: 'Remove Member?',
-            text: `Remove "${name}" from the list?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc2626',
-            confirmButtonText: 'Yes, remove!'
-        }).then(res => {
-            if(res.isConfirmed) {
-                members.splice(index, 1);
-                renderMembersTable();
-                updateMemberIdDisplay();
-            }
-        });
-    });
-}
     // ================= OPEN ADD MEMBER MODAL =================
     function openAddMemberModal() {
         const branchId = $('#branchId').val();
@@ -1299,55 +1391,56 @@ function renderMembersTable() {
         modal.show();
     }
 
-  function updateMemberFromModal() {
-    const index = parseInt($('#editMemberIndex').val());
-    const relation = $('#editRelation').val();
-    const name = $('#editName').val().trim();
-    const dob = $('#editDob').val();
-    const gender = $('#editGender').val();
-    const contact = $('#editContact').val().trim();
-    const education = $('#editEducation').val();
-    const job = $('#editJob').val();
-    const maritalStatus = $('#editMaritalStatus').val();
-    const remarks = $('#editRemarks').val().trim();
-    const photoFile = document.getElementById('editPhotoUpload').files[0];
-    
-    if(!relation || !name || !dob || !gender || !contact || !education || !job || !maritalStatus) {
-        Swal.fire({ icon: 'warning', title: 'Missing Fields', text: 'Please fill all required fields.' });
-        return;
-    }
-    
-    if(contact.length !== 10 || !/^[0-9]+$/.test(contact)) {
-        Swal.fire({ icon: 'warning', title: 'Invalid Contact', text: 'Please enter a valid 10-digit mobile number.' });
-        return;
-    }
-    
-    const member = members[index];
-    member.relation = relation;
-    member.name = name;
-    member.dob = dob;
-    member.gender = gender;
-    member.contact = contact;
-    member.education = education;
-    member.job = job;
-    member.maritalStatus = maritalStatus;
-    member.remarks = remarks;
-    
-    if(photoFile) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            member.photo = e.target.result;
+    function updateMemberFromModal() {
+        const index = parseInt($('#editMemberIndex').val());
+        const relation = $('#editRelation').val();
+        const name = $('#editName').val().trim();
+        const dob = $('#editDob').val();
+        const gender = $('#editGender').val();
+        const contact = $('#editContact').val().trim();
+        const education = $('#editEducation').val();
+        const job = $('#editJob').val();
+        const maritalStatus = $('#editMaritalStatus').val();
+        const remarks = $('#editRemarks').val().trim();
+        const photoFile = document.getElementById('editPhotoUpload').files[0];
+        
+        if(!relation || !name || !dob || !gender || !contact || !education || !job || !maritalStatus) {
+            Swal.fire({ icon: 'warning', title: 'Missing Fields', text: 'Please fill all required fields.' });
+            return;
+        }
+        
+        if(contact.length !== 10 || !/^[0-9]+$/.test(contact)) {
+            Swal.fire({ icon: 'warning', title: 'Invalid Contact', text: 'Please enter a valid 10-digit mobile number.' });
+            return;
+        }
+        
+        const member = members[index];
+        member.relation = relation;
+        member.name = name;
+        member.dob = dob;
+        member.gender = gender;
+        member.contact = contact;
+        member.education = education;
+        member.job = job;
+        member.maritalStatus = maritalStatus;
+        member.remarks = remarks;
+        
+        if(photoFile) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                member.photo = e.target.result;
+                renderMembersTable();
+                bootstrap.Modal.getInstance(document.getElementById('editMemberModal')).hide();
+                Swal.fire({ icon: 'success', title: 'Updated!', timer: 1500, showConfirmButton: false });
+            };
+            reader.readAsDataURL(photoFile);
+        } else {
             renderMembersTable();
             bootstrap.Modal.getInstance(document.getElementById('editMemberModal')).hide();
             Swal.fire({ icon: 'success', title: 'Updated!', timer: 1500, showConfirmButton: false });
-        };
-        reader.readAsDataURL(photoFile);
-    } else {
-        renderMembersTable();
-        bootstrap.Modal.getInstance(document.getElementById('editMemberModal')).hide();
-        Swal.fire({ icon: 'success', title: 'Updated!', timer: 1500, showConfirmButton: false });
+        }
     }
-}
+    
     // ================= SUBMIT ALL DATA =================
     async function submitAllData() {
         if(isSubmitting) return;
