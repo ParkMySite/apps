@@ -192,7 +192,7 @@ if (savedSoundPref !== null) {
     soundEnabled = savedSoundPref === 'true';
 }
 
-// ======================== UPDATE LOGIN TIMESTAMP (FIXED) ========================
+// ======================== UPDATE LOGIN TIMESTAMP ========================
 function updateLoginTimestamp(username) {
     return new Promise((resolve) => {
         try {
@@ -883,6 +883,13 @@ function logout() {
         window.hideUserPopup();
     }
 
+    // Reset sidebar state on logout
+    const sidebar = document.getElementById('desktopSidebarContainer');
+    if (sidebar) {
+        sidebar.classList.remove('collapsed');
+        localStorage.removeItem('sidebarCollapsed');
+    }
+
     setTimeout(() => {
         document.getElementById('username').focus();
         resetLoginButtonState();
@@ -1244,13 +1251,58 @@ function loadUrlInIframe(url) {
     iframe.src = fullUrl;
 }
 
+// ======================== SIDEBAR TOGGLE FUNCTION (FIXED) ========================
 function initDesktopSidebarToggle() {
-    const btn = document.getElementById('desktopSidebarToggle');
+    const toggleBtn = document.getElementById('desktopSidebarToggle');
     const sidebar = document.getElementById('desktopSidebarContainer');
-    if (!btn || !sidebar) return;
-    btn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-    });
+    
+    if (!toggleBtn || !sidebar) {
+        console.warn('Sidebar toggle elements not found');
+        return;
+    }
+    
+    // Check if sidebar is collapsed from localStorage
+    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    
+    // Set initial state
+    if (isCollapsed) {
+        sidebar.classList.add('collapsed');
+    } else {
+        sidebar.classList.remove('collapsed');
+    }
+    
+    // Remove existing listeners to prevent duplicates
+    toggleBtn.removeEventListener('click', handleSidebarToggle);
+    toggleBtn.addEventListener('click', handleSidebarToggle);
+}
+
+function handleSidebarToggle(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const sidebar = document.getElementById('desktopSidebarContainer');
+    
+    if (!sidebar) return;
+    
+    const isCurrentlyCollapsed = sidebar.classList.contains('collapsed');
+    
+    if (isCurrentlyCollapsed) {
+        // Expand sidebar
+        sidebar.classList.remove('collapsed');
+        localStorage.setItem('sidebarCollapsed', 'false');
+    } else {
+        // Collapse sidebar
+        sidebar.classList.add('collapsed');
+        localStorage.setItem('sidebarCollapsed', 'true');
+    }
+    
+    // Trigger resize event for iframe
+    setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+        if (typeof window.adjustWrapperHeightForTicker === 'function') {
+            window.adjustWrapperHeightForTicker();
+        }
+    }, 350);
 }
 
 // ======================== RESET LOGIN BUTTON STATE ========================
@@ -1322,6 +1374,7 @@ document.addEventListener('DOMContentLoaded', function() {
         password.addEventListener('input', hideLoginError);
     }
 
+    // Initialize sidebar toggle
     initDesktopSidebarToggle();
 
     const welcomeMsg = document.getElementById('welcome-message');
@@ -1388,9 +1441,12 @@ window.updateLoginTimestamp = updateLoginTimestamp;
 window.updateLoginTimestampSimple = updateLoginTimestampSimple;
 window.updateLoginTimestampViaAPI = updateLoginTimestampViaAPI;
 window.testTimestampUpdate = testTimestampUpdate;
+window.initDesktopSidebarToggle = initDesktopSidebarToggle;
+window.handleSidebarToggle = handleSidebarToggle;
 
 console.log('[System] All systems initialized');
 console.log('[System] User details fetched from Login sheet columns: A-DisplayName, B-UserID, E-Email, H-Treasury, J-ImageURL');
 console.log('[System] Click on user avatar in navbar to view profile');
 console.log('[System] Timestamp update uses multiple methods for reliability');
 console.log('[System] To test timestamp update, run: testTimestampUpdate()');
+console.log('[System] Sidebar toggle initialized');
