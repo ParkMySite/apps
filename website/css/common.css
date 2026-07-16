@@ -105,8 +105,8 @@ body {
 }
 
 .tab-btn.active {
-    color: #1e4a76;
-    border-bottom-color: #1e4a76;
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
     background: white;
 }
 
@@ -184,12 +184,14 @@ body {
 
 /* ================= BUTTONS - PRIMARY ================= */
 .btn-primary-custom {
-    background: #0f3b5f;
+    background: #0d6efd;
     color: white;
 }
 
 .btn-primary-custom:hover:not(:disabled) {
-    background: #0a2c46;
+    background: #0850bb;
+    color: white;
+ 
 }
 
 /* ================= BUTTONS - SECONDARY ================= */
@@ -200,6 +202,7 @@ body {
 
 .btn-secondary-custom:hover {
     background: var(--gray-600);
+    color: white;
 }
 
 /* ================= BUTTONS - SUCCESS ================= */
