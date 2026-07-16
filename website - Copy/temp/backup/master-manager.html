@@ -16,34 +16,57 @@
     
     <style>
         * { box-sizing: border-box; }
+.modal-backdrop {background-color: #fff0;}
         body {
-            background: #eef2f7;
+            background: #ffffff00;
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             padding: 20px 16px;
             margin: 0;
         }
         .app-card {
-           max-width: 98%;
+           max-width: 100%;
 
             margin: 0 auto;
             background: white;
-            border-radius: 28px;
+            border-radius: 20px;
             box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-        .page-header {
-            background: linear-gradient(135deg, #0f5b9c 0%, #1a4b7a 100%);
-            color: white;
-            padding: 15px 25px;
-        }
-        .page-header h4 {
-            margin: 0;
-            font-weight: 600;
-        }
-        .page-header i {
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
+       .page-header {
+    padding: 15px 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+ 
+}
+.page-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-header-left i {
+    font-size: 1.8rem !important;
+    background: rgb(56 143 251 / 15%) !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+    color: #184f83 !important;
+}
+
+
+.page-header-left h1 {
+    margin: 0 !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: #184f83!important;
+}
+ .page-header-left p {
+            margin: 2px 0 0;
+            opacity: 0.7;
+            font-size: 0.75rem;
+ }
         .tab-header {
             display: flex;
             background: #f8fafc;
@@ -153,19 +176,20 @@
             border-left: 5px solid #1e4a76;
             font-size: 0.85rem;
         }
-        #global-loading-overlay {
+       #global-loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: #ffffff00;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10000;
-            backdrop-filter: blur(3px);
+          /*  backdrop-filter: blur(3px);*/
         }
+
         .modal-content { border-radius: 24px; }
         .filter-section {
             background: #f8fafc;
@@ -283,14 +307,17 @@
     </style>
 </head>
 <body>
+<div class="page-header">
+                <div class="page-header-left">
+                    <i class="bi bi-building"></i>
+                    <div>
+                        <h1>Master Manager - Branch Details</h1>
+                        <p>Add, edit, and manage branch information</p>
+                    </div>
+                </div>
+            </div>
 <div class="app-card">
-    <div class="page-header d-flex align-items-center">
-        <i class="bi bi-building"></i>
-        <div>
-            <h4>Master Manager - Branch Details</h4>
-            <small class="opacity-75">Add, edit, and manage branch information</small>
-        </div>
-    </div>
+ 
     <div class="tab-header">
         <button class="tab-btn active" id="tabAddBtn"><i class="bi bi-plus-circle"></i> Add Branch</button>
         <button class="tab-btn" id="tabEditBtn"><i class="bi bi-table"></i> Manage Branches</button>
@@ -866,7 +893,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted!',
-                        text: `Branch "${record.branchId} - ${record.homeId}" has been removed.`,
+                        text: `Master "${record.branchId} - ${record.homeId}" has been removed.`,
                         timer: 1500,
                         showConfirmButton: false
                     });
@@ -917,7 +944,7 @@
         const $btn = $("#confirmUpdateBtn");
         const originalHtml = $btn.html();
         $btn.html('<i class="bi bi-arrow-repeat"></i> Updating...').prop('disabled', true);
-        showGlobalLoading("Updating branch...");
+        showGlobalLoading("Updating...");
         
         try {
             const payload = {
@@ -1023,7 +1050,7 @@
             Swal.fire({ 
                 icon: 'success', 
                 title: 'Added!', 
-                text: `Branch "${branchId} - ${homeId}" has been added successfully.`,
+                text: `Master "${branchId} - ${homeId}" has been added successfully.`,
                 timer: 2000,
                 showConfirmButton: false
             });
