@@ -73,6 +73,7 @@ body {
     padding: 0.5rem 1rem;
     box-shadow: 0 4px 20px var(--shadow-color);
     border-bottom: 1px solid var(--border-color);
+    z-index: 997;
 }
 
 .navbar-brand {
