@@ -1,5 +1,5 @@
 // Service Worker for Mobile PWA
-const CACHE_NAME = 'App-mobile-v2';
+const CACHE_NAME = 'park My Site-mobile-v2';
 const BASE_PATH = '.';
 
 // Core assets to cache for offline support

@@ -61,8 +61,7 @@ self.addEventListener('activate', event => {
 
 // Fetch event - serve from cache first, then network
 self.addEventListener('fetch', event => {
-    // Skip cross-origin requests like Google Sheets API
-    if (event.request.url.includes('sheets.googleapis.com') || 
+     if (event.request.url.includes('sheets.googleapis.com') || 
         event.request.url.includes('googleapis.com') ||
         event.request.url.includes('firestore.googleapis.com')) {
         return;
