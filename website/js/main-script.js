@@ -504,11 +504,11 @@ function updateNotificationBadge(count) {
         setTimeout(() => {
             if (badge) badge.style.animation = 'pulse-red 1.5s infinite';
         }, 500);
-        document.title = `(${count}) Admin`;
+        document.title = `(${count}) App Title`;
     } else {
         badge.textContent = '0';
         badge.classList.add('zero');
-        document.title = ' Admin';
+        document.title = ' App Title';
     }
 }
 
