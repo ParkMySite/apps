@@ -504,11 +504,11 @@ function updateNotificationBadge(count) {
         setTimeout(() => {
             if (badge) badge.style.animation = 'pulse-red 1.5s infinite';
         }, 500);
-        document.title = `(${count}) App Title`;
+        document.title = `(${count}) Park My Site`;
     } else {
         badge.textContent = '0';
         badge.classList.add('zero');
-        document.title = ' App Title';
+        document.title = ' Park My Site';
     }
 }
 
@@ -876,7 +876,7 @@ function logout() {
 
     updateNotificationBadge(0);
     lastUnreadCount = 0;
-    document.title = ' App Title';
+    document.title = ' Park My Site';
     userInteracted = false;
 
     if (typeof window.hideUserPopup === 'function') {
