@@ -876,7 +876,7 @@ function logout() {
 
     updateNotificationBadge(0);
     lastUnreadCount = 0;
-    document.title = ' Admin';
+    document.title = ' App Title';
     userInteracted = false;
 
     if (typeof window.hideUserPopup === 'function') {
